@@ -12,9 +12,9 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "hashicorp/bionic64"
+  config.vm.box = "ubuntu/bionic64"
   
-  config.vm.network "forwarded_port", guest: 3306, host: 3309
+  #config.vm.network "forwarded_port", guest: 3306, host: 3306
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -40,6 +40,15 @@ Vagrant.configure("2") do |config|
   # Bridged networks make the machine appear as another physical device on
   # your network.
   config.vm.network "public_network"
+  config.vm.define "mysqlserver" do |mysqlserver|    
+    mysqlserver.vm.ugnetwork "forwarded_port", guest: 3306, host: 3306
+
+    mysqlserver.vm.provider "virtualbox" do |vb|
+      vb.name = "Exercicio1"
+    end
+
+    #mysqlserver.vm.provision "shell", inline: $script_mysql
+  end
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -69,10 +78,12 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
+
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update && \
     apt-get install -y mysql-server-5.7 && \    
     cat /vagrant/mysql/mysqld.cnf > /etc/mysql/mysql.conf.d/mysqld.cnf && \
     service mysql restart
    SHELL
+  
 end
